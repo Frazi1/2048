@@ -1,0 +1,25 @@
+{
+  "name": "2048js",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "fraz",
+  "license": "ISC",
+  "dependencies": {
+    "gulp-less": "^4.0.1",
+    "less": "^3.8.1"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.24.6",
+    "gulp": "^3.9.1",
+    "gulp-changed": "^3.2.0",
+    "gulp-clean": "^0.4.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-connect": "^5.5.0",
+    "gulp-serve": "^1.4.0",
+    "run-sequence": "^2.2.1"
+  }
+}

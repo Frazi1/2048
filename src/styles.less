@@ -1,0 +1,84 @@
+body {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+
+  display: flex;
+}
+
+.game-container {
+  border: solid green 1px;
+  margin: auto;
+  background: grey;
+  position: relative;
+}
+
+@gridSize: 4;
+@cellSize: 100px;
+@cellMargin: 10px;
+@cellBorderRadius: 6px;
+
+.grid-row {
+  display: flex;
+  margin-top: @cellMargin;
+}
+
+.grid-row:last-of-type {
+  margin-bottom: @cellMargin;
+}
+
+.grid-cell {
+  background: #9E9E9E;
+  width: @cellSize;
+  height: @cellSize;
+
+  margin-right: @cellMargin;
+  border-radius: @cellBorderRadius;
+}
+
+.grid-cell:first-of-type {
+  margin-left: @cellMargin;
+}
+
+.label {
+  position: absolute;
+  width: @cellSize;
+  height: @cellSize;
+  background: green;
+  font-size: 60px;
+}
+
+.label-grid(@size; @index:1) when ( @index <= @size) {
+  .label-grid(@size, (@index + 1));
+
+  .label-columns(@index, @size);
+}
+
+.label-columns(@row; @column) when (@column > 0) {
+  .label-columns(@row, (@column - 1));
+
+  .label-position-@{row}-@{column} {
+    top: ((@cellSize + @cellMargin) * (@row - 1)) + @cellMargin;
+    left: ((@cellSize + @cellMargin) * (@column - 1)) + @cellMargin;
+  }
+;
+}
+
+.label-values(@value:0 ) when (@value > 1 ) {
+  .label-value-@{value}:before {
+    content: "@{value}";
+  }
+  .label-values(@value / 2);
+}
+
+.label-grid(@gridSize);
+.label-values(2048);
+
+.test {
+  display: block;
+}
+
+body {
+  background: green;
+}
