@@ -5,13 +5,15 @@ const clean = require('gulp-clean')
 const browserSync = require('browser-sync').create()
 const runSequence = require('run-sequence')
 const changed = require('gulp-changed')
+const mainBowerFiles = require('main-bower-files')
+const sourceMaps = require('gulp-sourcemaps')
 
 const srcDir = 'src'
 const outputDir = 'build'
 
-const lessSrc = `${srcDir}/**/*.less`
-const jsSrc = `${srcDir}/**/*.js`
-const htmlSrc = `${srcDir}/index.html`
+const lessSrc = [`${srcDir}/**/*.less`]
+const jsSrc = [`${srcDir}/**/*.js`]
+const htmlSrc = [`${srcDir}/index.html`]
 
 function withBrowserReload (gulpObs) {
 	gulpObs
@@ -28,9 +30,11 @@ gulp.task('less', () => withBrowserReload(
 )
 
 gulp.task('js', () => withBrowserReload(
-	gulp.src(jsSrc)
+	gulp.src(mainBowerFiles().concat(jsSrc))
 		.pipe(changed(outputDir, {extension: '.js'}))
+		.pipe(sourceMaps.init())
 		.pipe(concat('index.js'))
+		.pipe(sourceMaps.write())
 		.pipe(gulp.dest(outputDir))
 	)
 )
