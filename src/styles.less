@@ -47,6 +47,8 @@ body {
   height: @cellSize;
   background: green;
   font-size: 60px;
+  transition-property: top, left;
+  transition-duration: 0.3s;
 }
 
 .label-grid(@size; @index:1) when ( @index <= @size) {
