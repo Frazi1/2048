@@ -1,0 +1,22 @@
+{
+  "name": "2048js",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "fraz"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/Frazi1/2048",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "lodash": "^4.17.10",
+    "jquery": "^3.3.1"
+  }
+}
