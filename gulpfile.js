@@ -7,6 +7,7 @@ const runSequence = require('run-sequence')
 const changed = require('gulp-changed')
 const mainBowerFiles = require('main-bower-files')
 const sourceMaps = require('gulp-sourcemaps')
+const resolveDependencies = require('gulp-resolve-dependencies')
 
 const srcDir = 'src'
 const outputDir = 'build'
@@ -33,6 +34,12 @@ gulp.task('js', () => withBrowserReload(
 	gulp.src(mainBowerFiles().concat(jsSrc))
 		.pipe(changed(outputDir, {extension: '.js'}))
 		.pipe(sourceMaps.init())
+		.pipe(resolveDependencies({
+			pattern: /\* @requires [\s-]*(.*\.js)/g
+		}))
+		.on('error', function (err) {
+			console.log(err.message)
+		})
 		.pipe(concat('index.js'))
 		.pipe(sourceMaps.write())
 		.pipe(gulp.dest(outputDir))
