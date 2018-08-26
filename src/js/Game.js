@@ -71,28 +71,19 @@ class Game {
 		const transitions = []
 		const startingPoint = this.getStartingPointFor(directionType)
 
-		if (directionType === DirectionType.RIGHT || directionType === DirectionType.LEFT) {
-			for (let row = 0; row < this.size; row++) {
-				let currentPoint = new Point(row, startingPoint.col)
-				while (this.isInBounds(currentPoint)) {
-					if (this.isPointEmpty(currentPoint) === false &&
-						this.canMoveFrom(currentPoint, directionType)) {
-						transitions.push(this.moveInDirection(currentPoint, directionType))
-					}
-					currentPoint = direction.moveBackwardFrom(currentPoint)
+		for (let axisIndex = 0; axisIndex < this.size; axisIndex++) {
+			let currentPoint
+			if (directionType === DirectionType.RIGHT || directionType === DirectionType.LEFT)
+				currentPoint = new Point(axisIndex, startingPoint.col)
+			else if (directionType === DirectionType.UP || directionType === DirectionType.DOWN)
+				currentPoint = new Point(startingPoint.row, axisIndex)
+
+			while (this.isInBounds(currentPoint)) {
+				if (this.isPointEmpty(currentPoint) === false &&
+					this.canMoveFrom(currentPoint, directionType)) {
+					transitions.push(this.moveInDirection(currentPoint, directionType))
 				}
-			}
-		}
-		else if (directionType === DirectionType.UP || directionType === DirectionType.DOWN) {
-			for (let col = 0; col < this.size; col++) {
-				let currentPoint = new Point(startingPoint.row, col)
-				while (this.isInBounds(currentPoint)) {
-					if (this.isPointEmpty(currentPoint) === false &&
-						this.canMoveFrom(currentPoint, directionType)) {
-						transitions.push(this.moveInDirection(currentPoint, directionType))
-					}
-					currentPoint = direction.moveBackwardFrom(currentPoint)
-				}
+				currentPoint = direction.moveBackwardFrom(currentPoint)
 			}
 		}
 
