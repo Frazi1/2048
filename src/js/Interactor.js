@@ -14,11 +14,19 @@ class Interactor {
 			case 37:
 				directionType = DirectionType.LEFT
 				break
+			case 38:
+				directionType = DirectionType.UP
+				break
 			case 39:
 				directionType = DirectionType.RIGHT
-				break;
+				break
+			case 40:
+				directionType = DirectionType.DOWN
+				break
 			case 32: //space
 				HtmlHelper.addTileDiv(this._game.spawnTile())
+			default:
+				return
 		}
 		const transitions = this._game.swipe(directionType)
 		this.handleTransitions(transitions)
@@ -27,9 +35,8 @@ class Interactor {
 
 	handleTransitions (transitions) {
 		_(transitions).each((t) => {
-			let currentPositionCssClass = HtmlHelper.getPositionsCssClass(t.fromPoint.row, t.fromPoint.col)
-			let el = $(`.${currentPositionCssClass}`)
-			el
+			const currentPositionCssClass = HtmlHelper.getPositionsCssClass(t.fromPoint.row, t.fromPoint.col)
+			$(`.${currentPositionCssClass}`)
 				.removeClass(currentPositionCssClass)
 				.removeClass(HtmlHelper.getValueCssClass(t.oldValue))
 				.addClass(HtmlHelper.getPositionsCssClass(t.toPoint.row, t.toPoint.col))

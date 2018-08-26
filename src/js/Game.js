@@ -75,9 +75,21 @@ class Game {
 			for (let row = 0; row < this.size; row++) {
 				let currentPoint = new Point(row, startingPoint.col)
 				while (this.isInBounds(currentPoint)) {
-					let nextPoint = direction.moveForwardFrom(currentPoint)
-					if (this.isPointEmpty(currentPoint) === false && this.isInBounds(nextPoint)) {
-						transitions.push(this.move(currentPoint, nextPoint))
+					if (this.isPointEmpty(currentPoint) === false &&
+						this.canMoveFrom(currentPoint, directionType)) {
+						transitions.push(this.moveInDirection(currentPoint, directionType))
+					}
+					currentPoint = direction.moveBackwardFrom(currentPoint)
+				}
+			}
+		}
+		else if (directionType === DirectionType.UP || directionType === DirectionType.DOWN) {
+			for (let col = 0; col < this.size; col++) {
+				let currentPoint = new Point(startingPoint.row, col)
+				while (this.isInBounds(currentPoint)) {
+					if (this.isPointEmpty(currentPoint) === false &&
+						this.canMoveFrom(currentPoint, directionType)) {
+						transitions.push(this.moveInDirection(currentPoint, directionType))
 					}
 					currentPoint = direction.moveBackwardFrom(currentPoint)
 				}
@@ -94,13 +106,24 @@ class Game {
 		return new Transition(fromPoint, toPoint, oldCellValue, oldCellValue)
 	}
 
+	moveInDirection (fromPoint, directionType) {
+		const direction = this.getDirection(directionType)
+		let toPoint = fromPoint
+		while (this.canMoveFrom(toPoint, directionType)) {
+			toPoint = direction.moveForwardFrom(toPoint)
+		}
+		return this.move(fromPoint, toPoint)
+	}
+
 	getDirection (directionType) {
+		if (_.isUndefined(directionType))
+			throw new Error('getDirection: directionType should be defined')
 		return _(this._directions).find((d) => d.type === directionType)
 	}
 
 	canMoveFrom (point, directionType) {
 		const newPoint = this.getDirection(directionType).moveForwardFrom(point)
-		return this.isInBounds(newPoint) && this.getCellValue()
+		return this.isInBounds(newPoint) && _.isUndefined(this.getCellValue(newPoint.row, newPoint.col))
 	}
 
 	isInBounds (point) {
@@ -117,9 +140,9 @@ class Game {
 			case DirectionType.RIGHT:
 				return this._maxPoint
 			case DirectionType.DOWN:
-				return this._minPoint
-			case DirectionType.UP:
 				return this._maxPoint
+			case DirectionType.UP:
+				return this._minPoint
 		}
 	}
 }

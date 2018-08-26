@@ -22,14 +22,14 @@ class HtmlHelper {
 	}
 
 	static registerKeyEventHandler (interactor) {
-		document.onkeydown =(e) => interactor.handleKeyEvent(e)
+		document.onkeydown = (e) => interactor.handleKeyEvent(e)
 	}
 
-	static getPositionsCssClass(row, col) {
+	static getPositionsCssClass (row, col) {
 		return `label-position-${row + 1}-${col + 1}`
 	}
 
-	static getValueCssClass(value) {
+	static getValueCssClass (value) {
 		return `label-value-${value}`
 	}
 }
