@@ -43,6 +43,11 @@ class MoveTransition extends Transition {
 	set newValue (value) {
 		this._newValue = value
 	}
+
+	get isSameSpot () {
+		return this.fromPoint.row === this.toPoint.row
+			&& this.fromPoint.col === this.toPoint.col
+	}
 }
 
 class RemoveTransition extends Transition {

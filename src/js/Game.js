@@ -88,8 +88,8 @@ class Game {
 				currentPoint = new Point(startingPoint.row, axisIndex)
 
 			while (this.isInBounds(currentPoint)) {
-				if (this.isPointEmpty(currentPoint) === false &&
-					this.canMoveFrom(currentPoint, directionType)) {
+				if (this.isPointEmpty(currentPoint) === false
+					&& (this.canMoveFrom(currentPoint, directionType) || this.canMergeInDirection(currentPoint, this.getDirection(directionType)))) {
 					transitions = transitions.concat(this.moveInDirection(currentPoint, directionType))
 				}
 				currentPoint = direction.moveBackwardFrom(currentPoint)
@@ -101,8 +101,11 @@ class Game {
 
 	move (fromPoint, toPoint) {
 		const oldCellValue = this.getCellValue(fromPoint.row, fromPoint.col)
-		this.changeTileLocation(fromPoint, toPoint, oldCellValue)
-		return new MoveTransition(fromPoint, toPoint, oldCellValue, oldCellValue)
+
+		let moveTransition = new MoveTransition(fromPoint, toPoint, oldCellValue, oldCellValue)
+		if(moveTransition.isSameSpot === false)
+			this.changeTileLocation(fromPoint, toPoint, oldCellValue)
+		return moveTransition
 	}
 
 	changeTileLocation (fromPoint, toPoint, cellValue) {
@@ -138,7 +141,8 @@ class Game {
 
 	canMoveFrom (point, directionType) {
 		const newPoint = this.getDirection(directionType).moveForwardFrom(point)
-		return this.isInBounds(newPoint) && _.isUndefined(this.getCellValue(newPoint.row, newPoint.col))
+		return this.isInBounds(newPoint)
+			&& _.isUndefined(this.getCellValue(newPoint.row, newPoint.col))
 	}
 
 	canMergeInDirection (fromPoint, direction) {
