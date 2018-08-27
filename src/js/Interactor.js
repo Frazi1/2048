@@ -24,7 +24,7 @@ class Interactor {
 				directionType = DirectionType.DOWN
 				break
 			case 32: //space
-				HtmlHelper.addTileDiv(this._game.spawnTile())
+				HtmlHelper.addTileDiv(this._game.spawnRandomTile())
 			default:
 				return
 		}
@@ -34,13 +34,23 @@ class Interactor {
 	}
 
 	handleTransitions (transitions) {
-		_(transitions).each((t) => {
-			const currentPositionCssClass = HtmlHelper.getPositionsCssClass(t.fromPoint.row, t.fromPoint.col)
-			$(`.${currentPositionCssClass}`)
-				.removeClass(currentPositionCssClass)
-				.removeClass(HtmlHelper.getValueCssClass(t.oldValue))
-				.addClass(HtmlHelper.getPositionsCssClass(t.toPoint.row, t.toPoint.col))
-				.addClass(HtmlHelper.getValueCssClass(t.newValue))
-		})
+		_(transitions)
+			.filter((t) => t instanceof MoveTransition)
+			.each((t) => {
+				const currentPositionCssClass = HtmlHelper.getPositionsCssClass(t.fromPoint.row, t.fromPoint.col)
+				$(`.${currentPositionCssClass}`)
+					.removeClass(currentPositionCssClass)
+					.removeClass(HtmlHelper.getValueCssClass(t.oldValue))
+					.addClass(HtmlHelper.getPositionsCssClass(t.toPoint.row, t.toPoint.col))
+					.addClass(HtmlHelper.getValueCssClass(t.newValue))
+			})
+
+		_(transitions)
+			.filter((t) => t instanceof RemoveTransition)
+			.each((t) => {
+				$(`.${HtmlHelper.getPositionsCssClass(t.fromPoint.row, t.fromPoint.col)}.${HtmlHelper.getValueCssClass(t.oldValue)}`)
+					.remove()
+			})
+
 	}
 }

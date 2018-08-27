@@ -24,14 +24,19 @@ class Game {
 		]
 	}
 
-	spawnTile () {
+
+	spawnTile(tile) {
+		this.addTile(tile)
+		return tile
+	}
+
+	spawnRandomTile () {
 		const emptyCells = this.emptyTiles
 		const value = _.random() > 0.5 ? 4 : 2
 		const targetTile = emptyCells[_.random(emptyCells.length)]
 		// const targetTile = emptyCells[0]
 		targetTile.value = value
-		this.addTile(targetTile)
-		return targetTile
+		return this.spawnTile(targetTile)
 	}
 
 	addTile (tile) {
@@ -40,6 +45,10 @@ class Game {
 
 	getRow (row) {
 		return this.field[row]
+	}
+
+	getCellValueFromPoint (point) {
+		return this.getCellValue(point.row, point.col)
 	}
 
 	getCellValue (row, col) {
@@ -68,7 +77,7 @@ class Game {
 
 	swipe (directionType) {
 		const direction = this.getDirection(directionType)
-		const transitions = []
+		let transitions = []
 		const startingPoint = this.getStartingPointFor(directionType)
 
 		for (let axisIndex = 0; axisIndex < this.size; axisIndex++) {
@@ -81,7 +90,7 @@ class Game {
 			while (this.isInBounds(currentPoint)) {
 				if (this.isPointEmpty(currentPoint) === false &&
 					this.canMoveFrom(currentPoint, directionType)) {
-					transitions.push(this.moveInDirection(currentPoint, directionType))
+					transitions = transitions.concat(this.moveInDirection(currentPoint, directionType))
 				}
 				currentPoint = direction.moveBackwardFrom(currentPoint)
 			}
@@ -92,9 +101,13 @@ class Game {
 
 	move (fromPoint, toPoint) {
 		const oldCellValue = this.getCellValue(fromPoint.row, fromPoint.col)
-		this.setCellValue(toPoint.row, toPoint.col, oldCellValue)
+		this.changeTileLocation(fromPoint, toPoint, oldCellValue)
+		return new MoveTransition(fromPoint, toPoint, oldCellValue, oldCellValue)
+	}
+
+	changeTileLocation (fromPoint, toPoint, cellValue) {
+		this.setCellValue(toPoint.row, toPoint.col, cellValue)
 		this.setCellValue(fromPoint.row, fromPoint.col, undefined)
-		return new Transition(fromPoint, toPoint, oldCellValue, oldCellValue)
 	}
 
 	moveInDirection (fromPoint, directionType) {
@@ -103,7 +116,18 @@ class Game {
 		while (this.canMoveFrom(toPoint, directionType)) {
 			toPoint = direction.moveForwardFrom(toPoint)
 		}
-		return this.move(fromPoint, toPoint)
+
+		let moveTransition = this.move(fromPoint, toPoint)
+		const transitions = [moveTransition]
+
+		if (this.canMergeInDirection(toPoint, direction)) {
+			moveTransition.newValue = moveTransition.oldValue * 2
+			const mergePoint = direction.moveForwardFrom(moveTransition.toPoint)
+			this.changeTileLocation(moveTransition.toPoint, mergePoint, moveTransition.newValue)
+			moveTransition.toPoint = mergePoint
+			return [moveTransition, new RemoveTransition(moveTransition.toPoint, moveTransition.oldValue)]
+		}
+		return transitions
 	}
 
 	getDirection (directionType) {
@@ -115,6 +139,14 @@ class Game {
 	canMoveFrom (point, directionType) {
 		const newPoint = this.getDirection(directionType).moveForwardFrom(point)
 		return this.isInBounds(newPoint) && _.isUndefined(this.getCellValue(newPoint.row, newPoint.col))
+	}
+
+	canMergeInDirection (fromPoint, direction) {
+		const newPoint = direction.moveForwardFrom(fromPoint)
+		return this.isPointEmpty(fromPoint) === false
+			&& this.isInBounds(newPoint)
+			&& this.isPointEmpty(newPoint) === false
+			&& this.getCellValueFromPoint(fromPoint) === this.getCellValueFromPoint(newPoint)
 	}
 
 	isInBounds (point) {
