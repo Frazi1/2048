@@ -40,7 +40,7 @@ class Game {
 	}
 
 	addTile (tile) {
-		this.field[tile.row][tile.col] = tile.value
+		this.field[tile.row][tile.col] = tile
 	}
 
 	getRow (row) {
@@ -52,11 +52,14 @@ class Game {
 	}
 
 	getCellValue (row, col) {
-		return this.getRow(row)[col]
+    const tile = this.getRow(row)[col]
+    return tile
+      ? tile.value
+      : undefined
 	}
 
-	setCellValue (row, col, value) {
-		this.getRow(row)[col] = value
+	setCellTile (row, col, tile) {
+		this.getRow(row)[col] = tile
 	}
 
 	get emptyTiles () {
@@ -104,13 +107,13 @@ class Game {
 
 		let moveTransition = new MoveTransition(fromPoint, toPoint, oldCellValue, oldCellValue)
 		if(moveTransition.isSameSpot === false)
-			this.changeTileLocation(fromPoint, toPoint, oldCellValue)
+			this.changeTileLocation(fromPoint, toPoint, new Tile(toPoint.row, toPoint.col, oldCellValue))
 		return moveTransition
 	}
 
-	changeTileLocation (fromPoint, toPoint, cellValue) {
-		this.setCellValue(toPoint.row, toPoint.col, cellValue)
-		this.setCellValue(fromPoint.row, fromPoint.col, undefined)
+	changeTileLocation (fromPoint, toPoint, tile) {
+		this.setCellTile(toPoint.row, toPoint.col, tile)
+		this.setCellTile(fromPoint.row, fromPoint.col, undefined)
 	}
 
 	moveInDirection (fromPoint, directionType) {
@@ -126,7 +129,11 @@ class Game {
 		if (this.canMergeInDirection(toPoint, direction)) {
 			moveTransition.newValue = moveTransition.oldValue * 2
 			const mergePoint = direction.moveForwardFrom(moveTransition.toPoint)
-			this.changeTileLocation(moveTransition.toPoint, mergePoint, moveTransition.newValue)
+      this.changeTileLocation(
+        moveTransition.toPoint,
+				mergePoint,
+				new Tile(mergePoint.row, mergePoint.col, moveTransition.newValue))
+
 			moveTransition.toPoint = mergePoint
 			return [moveTransition, new RemoveTransition(moveTransition.toPoint, moveTransition.oldValue)]
 		}
