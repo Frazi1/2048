@@ -14,6 +14,6 @@
 	console.log(p.col)
 	HtmlHelper.buildGameField(4)
 	const game = new Game(4)
-	HtmlHelper.addTileDiv(game.spawnTile())
+	HtmlHelper.addTileDiv(game.spawnRandomTile())
 	HtmlHelper.registerKeyEventHandler(new Interactor(game))
 })()

@@ -33,7 +33,7 @@ class Game {
 	spawnRandomTile () {
 		const emptyCells = this.emptyTiles
 		const value = _.random() > 0.5 ? 4 : 2
-		const targetTile = emptyCells[_.random(emptyCells.length)]
+		const targetTile = emptyCells[_.random(emptyCells.length - 1)]
 		// const targetTile = emptyCells[0]
 		targetTile.value = value
 		return this.spawnTile(targetTile)
@@ -96,7 +96,7 @@ class Game {
 			}
 		}
 
-		return transitions
+		return {transitions: transitions, newTile: transitions.length > 0 ? this.spawnRandomTile() : null}
 	}
 
 	move (fromPoint, toPoint) {
