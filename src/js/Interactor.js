@@ -29,6 +29,10 @@ class Interactor {
 				return
 		}
 		const swipeResult = this._game.swipe(directionType)
+		if(this._game.isGameOver()){
+			alert("game over")
+			return
+		}
 		this.handleTransitions(swipeResult.transitions, swipeResult.newTile)
 		// HtmlHelper.addTileDiv(swipeResult.newTile)
 		console.log(this._game.field)

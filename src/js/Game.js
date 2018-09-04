@@ -220,18 +220,22 @@ class Game {
   }
 
   resetNewTiles () {
-    let value = this.notEmptyTiles
-    _(value)
-      .forEach(function (t) {
-        t.isNew = false
-      })
+    _(this.notEmptyTiles)
+      .forEach(t => t.isNew = false)
   }
 
   resetMergedTiles() {
-    let value = this.notEmptyTiles
-    _(value)
-      .forEach(function (t) {
-        t.isMerged = false
+    _(this.notEmptyTiles)
+      .forEach(t => t.isMerged = false)
+  }
+
+  isGameOver() {
+	  if(this.emptyTiles.length !== 0) return false
+    return _(this.notEmptyTiles)
+      .every(tile => {
+        const point = new Point(tile.row, tile.col)
+        return _(this._directions)
+          .some(direction => this.canMoveFrom(point, direction.type) || this.canMergeInDirection(point, direction)) === false
       })
   }
 }
