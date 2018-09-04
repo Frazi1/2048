@@ -51,8 +51,16 @@ class Game {
 		return this.getCellValue(point.row, point.col)
 	}
 
+	getTileFromPoint (point) {
+	  return this.getTile(point.row, point.col)
+  }
+
+  getTile(row, col) {
+	  return this.getRow(row)[col]
+  }
+
 	getCellValue (row, col) {
-    const tile = this.getRow(row)[col]
+    const tile = this.getTile(row, col)
     return tile
       ? tile.value
       : undefined
@@ -79,6 +87,9 @@ class Game {
 	}
 
 	swipe (directionType) {
+	  this.resetNewTiles()
+    this.resetMergedTiles()
+
 		const direction = this.getDirection(directionType)
 		let transitions = []
 		const startingPoint = this.getStartingPointFor(directionType)
@@ -132,7 +143,7 @@ class Game {
       this.changeTileLocation(
         moveTransition.toPoint,
 				mergePoint,
-				new Tile(mergePoint.row, mergePoint.col, moveTransition.newValue))
+				new Tile(mergePoint.row, mergePoint.col, moveTransition.newValue, true))
 
 			moveTransition.toPoint = mergePoint
 			return [moveTransition, new RemoveTransition(moveTransition.toPoint, moveTransition.oldValue)]
@@ -154,10 +165,26 @@ class Game {
 
 	canMergeInDirection (fromPoint, direction) {
 		const newPoint = direction.moveForwardFrom(fromPoint)
-		return this.isPointEmpty(fromPoint) === false
-			&& this.isInBounds(newPoint)
-			&& this.isPointEmpty(newPoint) === false
-			&& this.getCellValueFromPoint(fromPoint) === this.getCellValueFromPoint(newPoint)
+    // let fromEmpty = this.isPointEmpty(fromPoint) === false
+    // let fromInBounds = this.isInBounds(newPoint)
+    // let newEmpty = this.isPointEmpty(newPoint) === false
+    // let valuesAreEqual = this.getCellValueFromPoint(fromPoint) === this.getCellValueFromPoint(newPoint)
+    // let fromIsNotNew = this.getTileFromPoint(fromPoint).isMerged === false
+    // let newInInBounds = this.isInBounds(newPoint)
+    // if(!newInInBounds) return false
+    // let NewIsNotNew = this.getTileFromPoint(newPoint).isMerged === false
+    // return fromEmpty
+			// && fromInBounds
+			// && newEmpty
+			// && valuesAreEqual
+    //   && fromIsNotNew
+    //   && NewIsNotNew
+    return this.isPointEmpty(fromPoint) === false
+      && this.isInBounds(newPoint)
+      && this.isPointEmpty(newPoint) === false
+      && this.getCellValueFromPoint(fromPoint) === this.getCellValueFromPoint(newPoint)
+      && this.getTileFromPoint(fromPoint).isMerged === false
+      && this.getTileFromPoint(newPoint).isMerged === false
 	}
 
 	isInBounds (point) {
@@ -179,4 +206,32 @@ class Game {
 				return this._minPoint
 		}
 	}
+
+  get notEmptyTiles() {
+    let result = []
+    for (let row = 0; row < this.size; row++) {
+      for (let col = 0; col < this.size; col++) {
+        let point = new Point(row, col)
+        if (this.isPointEmpty(point) === false)
+          result.push(this.getTileFromPoint(point))
+      }
+    }
+    return result
+  }
+
+  resetNewTiles () {
+    let value = this.notEmptyTiles
+    _(value)
+      .forEach(function (t) {
+        t.isNew = false
+      })
+  }
+
+  resetMergedTiles() {
+    let value = this.notEmptyTiles
+    _(value)
+      .forEach(function (t) {
+        t.isMerged = false
+      })
+  }
 }
