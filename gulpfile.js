@@ -23,7 +23,7 @@ function withBrowserReload (gulpObs) {
 
 gulp.task('less', () => withBrowserReload(
 	gulp.src(lessSrc)
-		.pipe(changed(outputDir, {extension: '.css'}))
+		// .pipe(changed(outputDir, {extension: '.css'}))
 		.pipe(less())
 		.pipe(concat('styles.css'))
 		.pipe(gulp.dest(outputDir))

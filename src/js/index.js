@@ -3,6 +3,7 @@
 * @requires HtmlHelper.js
 * @requires Point.js
 * @requires Interactor.js
+* @requires ModalHelper.js
  */
 'use strict';
 
@@ -35,7 +36,28 @@
   HtmlHelper.registerKeyEventHandler(interactor)
   startNewGame(interactor, size)
 
-  $('.btn-new-game').click(() => startNewGame(interactor, size))
+  $('.btn-new-game').click((e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    startNewGame(interactor, size)
+    ModalHelper.toggleModal('.score-modal')
+  })
+  $('.modal-content').click((e) => {
+    e.stopPropagation()
+  })
+  $('#btn-save-score-cancel').click((e) =>{
+    e.preventDefault()
+    e.stopPropagation()
+    ModalHelper.closeModals()
+  })
+  $('#btn-save-score').click((e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    const name = $('#name').val()
+    HttpHelper.savePlayerScore(name, interactor.game.score)
+  })
+
+  $(document).click(() => ModalHelper.closeModals())
 })()
 
 function testVerticalNoMoveMerge (game) {
