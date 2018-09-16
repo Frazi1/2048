@@ -10,6 +10,7 @@ class Game {
 	constructor (size) {
 		this.size = size
 		this.field = []
+    this.score = 0
 		for (let i = 0; i < size; i++) {
 			this.field[i] = []
 		}
@@ -23,7 +24,6 @@ class Game {
 			new DirectionRight()
 		]
 	}
-
 
 	spawnTile(tile) {
 		this.addTile(tile)
@@ -110,9 +110,15 @@ class Game {
 			}
 		}
 
+		this.updateScore(transitions)
 		return {transitions: transitions, newTile: transitions.length > 0 ? this.spawnRandomTile() : null}
 	}
 
+	updateScore(transitions) {
+    _(transitions)
+      .filter(t => t instanceof MoveTransition)
+      .each(t => this.score += t.newValue)
+  }
 	move (fromPoint, toPoint) {
 		const oldCellValue = this.getCellValue(fromPoint.row, fromPoint.col)
 
@@ -146,6 +152,7 @@ class Game {
 				new Tile(mergePoint.row, mergePoint.col, moveTransition.newValue, true))
 
 			moveTransition.toPoint = mergePoint
+
 			return [moveTransition, new RemoveTransition(moveTransition.toPoint, moveTransition.oldValue)]
 		}
 		return transitions

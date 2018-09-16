@@ -46,4 +46,8 @@ class HtmlHelper {
 	static getValueCssClass (value) {
 		return `label-value-${value}`
 	}
+
+	static setScore(score) {
+		$('.score-container').html(`Score: ${score}`)
+	}
 }

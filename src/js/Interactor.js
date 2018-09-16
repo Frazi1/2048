@@ -3,8 +3,9 @@
  * @requires HtmlHelper.js
  */
 class Interactor {
-  constructor (game) {
-    this._game = game
+
+  constructor() {
+    this.game = null
   }
 
   handleKeyEvent (event) {
@@ -27,22 +28,27 @@ class Interactor {
         if (event.ctrlKey)
           HtmlHelper.clearTileDivs()
         else
-          HtmlHelper.addTileDiv(this._game.spawnRandomTile())
+          this.addRandomTile()
       default:
         return
     }
-    const swipeResult = this._game.swipe(directionType)
-    Interactor.draw(this._game, swipeResult.transitions, swipeResult.newTile)
-    if (this._game.isGameOver()) {
+    const swipeResult = this.game.swipe(directionType)
+    this.draw()
+    if (this.game.isGameOver()) {
       alert('game over')
       return
     }
-    console.log(this._game.field)
+    console.log(this.game.field)
   }
 
-  static draw (game, transitions, newTile) {
+  addRandomTile () {
+    HtmlHelper.addTileDiv(this.game.spawnRandomTile())
+  }
+
+  draw () {
     HtmlHelper.clearTileDivs()
-    _(game.notEmptyTiles).each(tile => HtmlHelper.addTileDiv(tile))
+    _(this.game.notEmptyTiles).each(tile => HtmlHelper.addTileDiv(tile))
+    HtmlHelper.setScore(this.game.score)
   }
 
   // handleTransitions (transitions, newTile) {
