@@ -39,7 +39,6 @@
   $('.btn-new-game').click((e) => {
     e.preventDefault()
     e.stopPropagation()
-    startNewGame(interactor, size)
     ModalHelper.toggleModal('.score-modal')
   })
   $('.modal-content').click((e) => {
@@ -49,12 +48,14 @@
     e.preventDefault()
     e.stopPropagation()
     ModalHelper.closeModals()
+    startNewGame(interactor, size)
   })
   $('#btn-save-score').click((e) => {
     e.stopPropagation()
     e.preventDefault()
     const name = $('#name').val()
-    HttpHelper.savePlayerScore(name, interactor.game.score)
+    HttpHelper.savePlayerScore(name, interactor.game.score, ModalHelper.closeModals)
+    startNewGame(interactor, size)
   })
 
   $(document).click(() => ModalHelper.closeModals())

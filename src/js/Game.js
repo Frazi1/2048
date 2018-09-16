@@ -110,15 +110,9 @@ class Game {
 			}
 		}
 
-		this.updateScore(transitions)
 		return {transitions: transitions, newTile: transitions.length > 0 ? this.spawnRandomTile() : null}
 	}
 
-	updateScore(transitions) {
-    _(transitions)
-      .filter(t => t instanceof MoveTransition)
-      .each(t => this.score += t.newValue)
-  }
 	move (fromPoint, toPoint) {
 		const oldCellValue = this.getCellValue(fromPoint.row, fromPoint.col)
 
@@ -153,6 +147,7 @@ class Game {
 
 			moveTransition.toPoint = mergePoint
 
+      this.score += moveTransition.newValue
 			return [moveTransition, new RemoveTransition(moveTransition.toPoint, moveTransition.oldValue)]
 		}
 		return transitions
