@@ -226,16 +226,18 @@ class Game {
 
   resetMergedTiles() {
     _(this.notEmptyTiles)
-      .forEach(t => t.isMerged = false)
+      .forEach(function (t) {
+				t.isMerged = false
+      })
   }
 
   isGameOver() {
 	  if(this.emptyTiles.length !== 0) return false
-    return _(this.notEmptyTiles)
-      .every(tile => {
+    return true === _(this.notEmptyTiles)
+      .some(tile => {
         const point = new Point(tile.row, tile.col)
-        return _(this._directions)
-          .some(direction => this.canMoveFrom(point, direction.type) || this.canMergeInDirection(point, direction)) === false
+        return true === _(this._directions)
+          .some(direction => this.canMoveFrom(point, direction.type) || this.canMergeInDirection(point, direction))
       })
   }
 }

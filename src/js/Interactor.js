@@ -29,11 +29,11 @@ class Interactor {
 				return
 		}
 		const swipeResult = this._game.swipe(directionType)
+    this.handleTransitions(swipeResult.transitions, swipeResult.newTile)
 		if(this._game.isGameOver()){
 			alert("game over")
 			return
 		}
-		this.handleTransitions(swipeResult.transitions, swipeResult.newTile)
 		// HtmlHelper.addTileDiv(swipeResult.newTile)
 		console.log(this._game.field)
 	}
@@ -41,6 +41,7 @@ class Interactor {
 	handleTransitions (transitions, newTile) {
 		let transitionsCounter = 0
 		let finishedTransitions = 0
+		let newTileAdded = false
 		_(transitions)
 			.filter((t) => t instanceof MoveTransition)
 			.each((t) => {
@@ -59,12 +60,17 @@ class Interactor {
 								$(`.${HtmlHelper.getPositionsCssClass(t.fromPoint.row, t.fromPoint.col)}.${HtmlHelper.getValueCssClass(t.oldValue)}`)
 									.remove()
 							})
-						if(newTile !== null)
-							HtmlHelper.addTileDiv(newTile)
+						if(newTile !== null) {
+              HtmlHelper.addTileDiv(newTile)
+							newTileAdded = true
+            }
 					}
 				})
 				transitionsCounter++
 			})
+
+		if(newTileAdded === false)
+			HtmlHelper.addTileDiv(newTile)
 	}
 
 	static whichTransitionEvent () {
