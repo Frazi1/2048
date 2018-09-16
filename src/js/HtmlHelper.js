@@ -17,11 +17,25 @@ class HtmlHelper {
 
 	static addTileDiv (tile) {
 		const tileDiv = $('<div></div>').addClass(`label ${HtmlHelper.getPositionsCssClass(tile.row, tile.col)} ${HtmlHelper.getValueCssClass(tile.value)}`)
-		const container = $('.game-container')
+		const container = this.getTileContainer()
 		container.append(tileDiv)
 	}
 
-	static registerKeyEventHandler (interactor) {
+	static clearTileDivs(){
+    let children = HtmlHelper.getTileContainer()
+      .children()
+      .remove()
+	}
+
+  static getGameContainer () {
+    return $('.game-container')
+  }
+
+  static getTileContainer () {
+	  return $('.tiles-grid')
+  }
+
+  static registerKeyEventHandler (interactor) {
 		document.onkeydown = (e) => interactor.handleKeyEvent(e)
 	}
 
