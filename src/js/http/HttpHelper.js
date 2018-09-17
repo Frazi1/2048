@@ -11,7 +11,7 @@ class HttpHelper {
     let xmlHttpRequest = new XMLHttpRequest
     xmlHttpRequest.onreadystatechange = function () {
       if(callback && this.readyState === 4)
-        callback()
+        callback(xmlHttpRequest)
     }
     xmlHttpRequest.open(method, url,  true)
 
@@ -21,5 +21,11 @@ class HttpHelper {
   static savePlayerScore(name, score, callback){
     const req = HttpHelper.buildReq('POST', '/players', `name=${name}&score=${score}`, callback)
     req.send()
+  }
+
+  static getLeaderBoards(callback) {
+    const req = HttpHelper.buildReq('GET', '/games', 'top=100', callback)
+    req.send()
+    return req
   }
 }

@@ -4,11 +4,14 @@
 * @requires logic/Point.js
 * @requires Interactor.js
 * @requires html/ModalHelper.js
+* @requires leaderboards/LeaderBoardsInteractor.js
  */
 'use strict';
 
 (function start () {
   let size = 4
+  const leaderBoardsInteractor = new LeaderBoardsInteractor;
+  leaderBoardsInteractor.loadLeaderBoards()
   HtmlHelper.buildGameField(size)
   // HtmlHelper.addTileDiv(game.spawnRandomTile())
   // HtmlHelper.addTileDiv(game.spawnTile(new Tile(0,0,2)))
@@ -54,7 +57,10 @@
     e.stopPropagation()
     e.preventDefault()
     const name = $('#name').val()
-    HttpHelper.savePlayerScore(name, interactor.game.score, ModalHelper.closeModals)
+    HttpHelper.savePlayerScore(name, interactor.game.score, ()=>{
+      ModalHelper.closeModals()
+      leaderBoardsInteractor.loadLeaderBoards()
+    })
     startNewGame(interactor, size)
   })
 
