@@ -1,6 +1,6 @@
 /*
- * @requires Direction.js
- * @requires HtmlHelper.js
+ * @requires logic/Direction.js
+ * @requires html/HtmlHelper.js
  */
 class Interactor {
 
@@ -8,8 +8,7 @@ class Interactor {
     this.game = null
   }
 
-  handleKeyEvent (event) {
-    console.log(event)
+  handleDirectionSwipe(event) {
     let directionType
     switch (event.which) {
       case 37:
@@ -24,21 +23,35 @@ class Interactor {
       case 40:
         directionType = DirectionType.DOWN
         break
-      case 32: //space
-        if (event.ctrlKey)
-          HtmlHelper.clearTileDivs()
-        else
-          this.addRandomTile()
       default:
-        return
+        return false
     }
+    event.preventDefault()
     const swipeResult = this.game.swipe(directionType)
     this.draw()
     if (this.game.isGameOver()) {
       alert('game over')
       return
     }
+
     console.log(this.game.field)
+
+    return true
+  }
+
+  handleKeyEvent (event) {
+    console.log(event)
+
+    if(this.handleDirectionSwipe(event) === true) return
+
+    switch (event.which) {
+      case 32: //space
+        if (event.ctrlKey)
+          HtmlHelper.clearTileDivs()
+        else
+          this.addRandomTile()
+        break
+    }
   }
 
   addRandomTile () {

@@ -2,11 +2,12 @@ body {
   position: absolute;
   height: 100%;
   width: 100%;
-  margin: 0;
+  margin: 80px 0 0 0;
 
   display: flex;
+  flex-direction: column;
   div {
-    margin: auto;
+    margin: 0 auto;
   }
 
   background: #e8e8e542;
@@ -66,8 +67,8 @@ body {
   height: @cellSize;
   background: green;
   font-size: 60px;
-  transition-property: top, left;
-  transition-duration: 0.08s;
+  //transition-property: top, left;
+  //transition-duration: 0.08s;
 }
 
 .label-grid(@size; @index:1) when ( @index <= @size) {
@@ -80,10 +81,10 @@ body {
   .label-columns(@row, (@column - 1));
 
   .label-position-@{row}-@{column} {
-    top: ((@cellSize + @cellMargin) * (@row - 1)) + @cellMargin;
-    left: ((@cellSize + @cellMargin) * (@column - 1)) + @cellMargin;
-  }
-;
+    transform: translate(
+              (@cellSize + @cellMargin) * (@column - 1) + @cellMargin,
+              (@cellSize + @cellMargin) * (@row - 1) + @cellMargin);
+  };
 }
 
 .label-values(@value:0 ) when (@value > 1 ) {
@@ -95,3 +96,18 @@ body {
 
 .label-grid(@gridSize);
 .label-values(2048);
+
+.leaderboards-container {
+  @gameItemHeight: 30px;
+  @maxDisplayedItems: 8;
+  max-width: 80%;
+
+  min-width: 500px;
+  max-height: @gameItemHeight * @maxDisplayedItems;
+  flex-shrink: 0;
+  overflow: auto;
+  .game-item {
+    display: flex;
+    height: @gameItemHeight;
+  }
+}

@@ -1,9 +1,9 @@
 /*
-* @requires Game.js
-* @requires HtmlHelper.js
-* @requires Point.js
+* @requires logic/Game.js
+* @requires html/HtmlHelper.js
+* @requires logic/Point.js
 * @requires Interactor.js
-* @requires ModalHelper.js
+* @requires html/ModalHelper.js
  */
 'use strict';
 
